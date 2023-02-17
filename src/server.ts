@@ -8,12 +8,13 @@ const server = new Koa();
 
 server.use(async ctx => {
   try {
-    const filePath = resolve("app/home.tsx");
-    const contents = await readFile(filePath, { encoding: "utf8" });
-    const result = await render(contents);
-    await bundle("app/home.tsx");
-    ctx.body = result;
+    // const filePath = resolve("app/home.tsx");
+    // const contents = await readFile(filePath, { encoding: "utf8" });
+    // const result = await render(contents);
+
+    ctx.body = await bundle("app/home.tsx");
   } catch (error) {
+    console.error(error);
     ctx.body = String(error);
   }
 });
