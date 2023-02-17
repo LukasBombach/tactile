@@ -6,7 +6,9 @@ export async function bundle(input: string): Promise<string> {
   const bundle = await rollup({
     input,
     plugins: [
-      resolve(),
+      resolve({
+        extensions: [".js", ".jsx", ".ts", ".tsx"],
+      }),
       babel({
         babelHelpers: "bundled",
         extensions: [".js", ".jsx", ".ts", ".tsx"],
