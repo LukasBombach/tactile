@@ -1,13 +1,10 @@
 {
-  "extends": "@tsconfig/node-lts-strictest-esm/tsconfig.json",
+  "extends": "@tsconfig/node-lts-strictest/tsconfig.json",
   "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "baseUrl": "src"
+    "jsx": "preserve"
   },
   "ts-node": {
-    "swc": true,
-    "esm": true
+    "swc": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
