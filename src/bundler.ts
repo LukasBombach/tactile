@@ -12,11 +12,7 @@ export async function bundle(input: string): Promise<string> {
       babel({
         babelHelpers: "bundled",
         extensions: [".js", ".jsx", ".ts", ".tsx"],
-        presets: [
-          "@babel/env",
-          ["@babel/preset-typescript", { allExtensions: true, isTSX: true }],
-          "@babel/preset-react",
-        ],
+        presets: ["@babel/env", "@babel/preset-typescript", "@babel/preset-react"],
       }),
     ],
   });
