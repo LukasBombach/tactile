@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import Koa from "koa";
+import { bundle } from "./bundler";
 import { render } from "./renderer";
 
 const server = new Koa();
@@ -10,6 +11,7 @@ server.use(async ctx => {
     const filePath = resolve("app/home.tsx");
     const contents = await readFile(filePath, { encoding: "utf8" });
     const result = await render(contents);
+    await bundle("app/home.tsx");
     ctx.body = result;
   } catch (error) {
     ctx.body = String(error);

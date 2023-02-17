@@ -19,6 +19,7 @@
     "@types/react": "18.0.28",
     "koa": "2.14.1",
     "regenerator-runtime": "0.13.11",
+    "rollup": "3.16.0",
     "ts-node": "10.9.1",
     "typescript": "4.9.5"
   }
