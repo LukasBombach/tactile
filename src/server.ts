@@ -7,7 +7,7 @@ const server = new Koa();
 server.use(async ctx => {
   try {
     await bundle("app/index.tsx", "dist/app");
-    ctx.body = await ssr("dist/app/index.js");
+    ctx.body = await ssr("dist/app/index_server.js");
   } catch (error) {
     console.error(error);
     ctx.body = String(error);
