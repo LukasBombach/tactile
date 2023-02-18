@@ -16,7 +16,7 @@ export default function babelPlugin(): { name: string; visitor: Visitor } {
           const events = getInteractiveComponents(path);
 
           if (events.length === 0) {
-            path.node.body = [statement`export default {};`()];
+            path.node.body = [statement`export {};`()];
             return;
           }
 

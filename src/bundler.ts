@@ -47,6 +47,7 @@ export async function createBundle(
         }),
         babel({
           babelHelpers: "bundled",
+          skipPreflightCheck: true,
           extensions: [".js", ".jsx", ".ts", ".tsx"],
           presets: ["@babel/env", "@babel/preset-typescript", ["@babel/preset-react", { runtime: "automatic" }]],
           plugins: babelPlugins,
