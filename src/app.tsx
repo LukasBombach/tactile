@@ -1,4 +1,4 @@
 import { renderToString } from "react-dom/server";
-import Home from "../app";
+import Home from "../dist/app";
 
 const html = renderToString(<Home />);
