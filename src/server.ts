@@ -1,3 +1,4 @@
+import { readFile } from "node:fs/promises";
 import Koa from "koa";
 import { bundle } from "./bundler";
 
@@ -5,7 +6,8 @@ const server = new Koa();
 
 server.use(async ctx => {
   try {
-    ctx.body = await bundle("app/Home.tsx");
+    await bundle("app/index.tsx", "dist/app/index.js");
+    ctx.body = await readFile("dist/app/index.js", "utf-8");
   } catch (error) {
     console.error(error);
     ctx.body = String(error);

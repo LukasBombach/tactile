@@ -1,8 +1,9 @@
+import { writeFile } from "node:fs/promises";
 import { rollup } from "rollup";
 import resolve from "@rollup/plugin-node-resolve";
 import babel from "@rollup/plugin-babel";
 
-export async function bundle(input: string): Promise<string> {
+export async function bundle(input: string, dist: string): Promise<void> {
   const bundle = await rollup({
     input,
     plugins: [
@@ -12,11 +13,12 @@ export async function bundle(input: string): Promise<string> {
       babel({
         babelHelpers: "bundled",
         extensions: [".js", ".jsx", ".ts", ".tsx"],
-        presets: ["@babel/env", "@babel/preset-typescript", "@babel/preset-react"],
+        presets: ["@babel/env", "@babel/preset-typescript", ["@babel/preset-react", { runtime: "automatic" }]],
       }),
     ],
+    external: ["react", "react/jsx-runtime"],
   });
   const { output } = await bundle.generate({});
   await bundle.close();
-  return output[0].code;
+  await writeFile(dist, output[0].code, "utf8");
 }
