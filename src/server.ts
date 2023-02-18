@@ -1,4 +1,3 @@
-import { readFile } from "node:fs/promises";
 import Koa from "koa";
 import { bundle } from "./bundler";
 import { ssr } from "./renderer";

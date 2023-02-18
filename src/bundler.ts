@@ -18,7 +18,7 @@ export async function bundle(input: string, dist: string): Promise<void> {
     ],
     external: ["react", "react/jsx-runtime"],
   });
-  const { output } = await bundle.generate({ format: "cjs" });
+  const result = await bundle.generate({ format: "cjs" });
   await bundle.close();
-  await writeFile(dist, output[0].code, "utf8");
+  await writeFile(dist, result.output[0].code, "utf8");
 }
