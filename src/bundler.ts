@@ -8,30 +8,14 @@ import type { RollupOptions, OutputOptions } from "rollup";
 import type { PluginItem } from "@babel/core";
 
 export async function bundle(entryFile: string, outputDir: string): Promise<void> {
-  await Promise.all([createServerBundle(entryFile, outputDir), createClientBundle(entryFile, outputDir)]);
+  await Promise.all([/* createServerBundle(entryFile, outputDir), */ createClientBundle(entryFile, outputDir)]);
 }
 
 export async function createServerBundle(entryFile: string, outputDir: string): Promise<void> {
-  await createBundle({ input: entryFile }, { file: `${outputDir}/index_server.js` });
+  await createBundle({ input: entryFile }, { file: `${outputDir}/index_server.js`, format: "cjs" });
 }
 export async function createClientBundle(entryFile: string, outputDir: string): Promise<void> {
-  await createBundle(
-    {
-      input: entryFile,
-      plugins: [
-        {
-          name: "source logger",
-          transform: (source, id) => {
-            console.log("--", id, "--");
-            console.log(source);
-            return source;
-          },
-        },
-      ],
-    },
-    { file: `${outputDir}/index_client.js` },
-    [clientJsPlugin]
-  );
+  await createBundle({ input: entryFile }, { file: `${outputDir}/index_client.js`, format: "es" }, [clientJsPlugin]);
 }
 
 export async function createBundle(
@@ -58,7 +42,7 @@ export async function createBundle(
     inputOptions
   );
 
-  const output: OutputOptions = deepmerge({ format: "cjs" }, outputOptions);
+  const output: OutputOptions = deepmerge({}, outputOptions);
 
   const bundle = await rollup(input);
   await bundle.write(output);
