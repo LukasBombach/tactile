@@ -8,7 +8,7 @@ import type { RollupOptions, OutputOptions } from "rollup";
 import type { PluginItem } from "@babel/core";
 
 export async function bundle(entryFile: string, outputDir: string): Promise<void> {
-  await Promise.all([/* createServerBundle(entryFile, outputDir), */ createClientBundle(entryFile, outputDir)]);
+  await Promise.all([createServerBundle(entryFile, outputDir), createClientBundle(entryFile, outputDir)]);
 }
 
 export async function createServerBundle(entryFile: string, outputDir: string): Promise<void> {
