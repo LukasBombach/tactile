@@ -27,6 +27,7 @@ specifiers:
   react-dom: 18.2.0
   regenerator-runtime: 0.13.11
   rollup: 3.16.0
+  rollup-plugin-output-manifest: 2.0.0
   ts-node: 10.9.1
   typescript: 4.9.5
 
@@ -57,6 +58,7 @@ devDependencies:
   react-dom: 18.2.0_react@18.2.0
   regenerator-runtime: 0.13.11
   rollup: 3.16.0
+  rollup-plugin-output-manifest: 2.0.0
   ts-node: 10.9.1_a6cgilziq4ioemrn6f543nxx5e
   typescript: 4.9.5
 
@@ -1682,6 +1684,10 @@ packages:
     resolution: {integrity: sha512-Y4XFY5VJAuw0FgAqPNd6NNoV44jbq9Bz2L7Rh/J6jLTiHBSBJa9fxqQIvkIld4GsoDOcCbvzOUAbLPsSKKg+uA==}
     dev: true
 
+  /@types/node/13.13.52:
+    resolution: {integrity: sha512-s3nugnZumCC//n4moGGe6tkNMyYEdaDBitVjwPxXmR5lnMG5dHePinH2EdxkG3Rh1ghFHHixAG4NJhpJW1rthQ==}
+    dev: true
+
   /@types/node/18.14.0:
     resolution: {integrity: sha512-5EWrvLmglK+imbCJY0+INViFWUHg1AHel1sq4ZVSfdcNqGy9Edv3UB9IIzzg+xPaUcAgZYcfVs2fBcwDeZzU0A==}
     dev: true
@@ -2279,6 +2285,13 @@ packages:
       supports-preserve-symlinks-flag: 1.0.0
     dev: true
 
+  /rollup-plugin-output-manifest/2.0.0:
+    resolution: {integrity: sha512-RJJ/MzM2Sj65o63qs1aIwD+AofAhdYi5Hx1Pk8/Fn6dWxbcSlficfJLNGeYJ14CPi7CHvEHwgjs23LiFS/x/Dw==}
+    dependencies:
+      '@types/node': 13.13.52
+      tslib: 1.14.1
+    dev: true
+
   /rollup/3.16.0:
     resolution: {integrity: sha512-9wE1H5N1SJqnROpQanBGJ7lrIitwlUYGj4Va4eyf3+vNhoIHLPLag2/CUGIiq3V9lHOBJB6zTsGsPvc50oeihg==}
     engines: {node: '>=14.18.0', npm: '>=8.0.0'}
@@ -2363,6 +2376,10 @@ packages:
       typescript: 4.9.5
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
+    dev: true
+
+  /tslib/1.14.1:
+    resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
     dev: true
 
   /tslib/2.5.0:

@@ -1,6 +1,7 @@
 import { rollup } from "rollup";
 import resolve from "@rollup/plugin-node-resolve";
 import babel from "@rollup/plugin-babel";
+import outputManifest from "rollup-plugin-output-manifest";
 import deepmerge from "deepmerge";
 import clientJsPlugin from "./babel/extractClientJs";
 
@@ -12,10 +13,17 @@ export async function bundle(entryFile: string, outputDir: string): Promise<void
 }
 
 export async function createServerBundle(entryFile: string, outputDir: string): Promise<void> {
-  await createBundle({ input: entryFile }, { file: `${outputDir}/index_server.js`, format: "cjs" });
+  await createBundle(
+    { input: entryFile, plugins: [outputManifest({ fileName: "manifest.server.json" })] },
+    { file: `${outputDir}/index_server.js`, format: "cjs" }
+  );
 }
 export async function createClientBundle(entryFile: string, outputDir: string): Promise<void> {
-  await createBundle({ input: entryFile }, { file: `${outputDir}/index_client.js`, format: "es" }, [clientJsPlugin]);
+  await createBundle(
+    { input: entryFile, plugins: [outputManifest({ fileName: "manifest.client.json" })] },
+    { file: `${outputDir}/index_client.js`, format: "es" },
+    [clientJsPlugin]
+  );
 }
 
 export async function createBundle(
@@ -36,6 +44,16 @@ export async function createBundle(
           presets: ["@babel/env", "@babel/preset-typescript", ["@babel/preset-react", { runtime: "automatic" }]],
           plugins: babelPlugins,
         }),
+        {
+          name: "remove empty",
+          generateBundle: (_options, bundle) => {
+            Object.keys(bundle).forEach(key => {
+              if (Object.hasOwn(bundle, key) && bundle[key]?.code?.trim().length === 0) {
+                delete bundle[key];
+              }
+            });
+          },
+        },
       ],
       external: ["react", "react/jsx-runtime"],
     },
