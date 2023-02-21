@@ -13,7 +13,7 @@ export default function babelPlugin(): { name: string; visitor: Visitor } {
     visitor: {
       Program: {
         enter(path) {
-          const events = getInteractiveComponents(path);
+          const events = getInteractions(path);
 
           if (events.length === 0) {
             path.node.body = [statement`export {};`()];
@@ -76,7 +76,7 @@ function getReferencedStatements(path: NodePath<Node>): NodePath<Statement>[] {
   });
 }
 
-function getInteractiveComponents(path: NodePath<Node>): [event: string, handler: NodePath<Expression>][] {
+function getInteractions(path: NodePath<Node>): [event: string, handler: NodePath<Expression>][] {
   const events: [event: string, handler: NodePath<Expression>][] = [];
 
   path.traverse({

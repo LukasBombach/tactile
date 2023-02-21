@@ -9,7 +9,12 @@ export default function Home() {
         <title>Hello App</title>
       </head>
       <body>
-        hello world
+        <main>
+          <p>hello world</p>
+          <p>
+            <button onClick={() => console.log("hello world")}>click me</button>
+          </p>
+        </main>
         <ClientJavaScript />
       </body>
     </html>
