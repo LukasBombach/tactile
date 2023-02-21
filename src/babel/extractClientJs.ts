@@ -1,6 +1,7 @@
 import { statement } from "@babel/template";
+import { getInteractions } from "./getInteractions";
 
-import type { Statement, Expression } from "@babel/types";
+import type { Statement } from "@babel/types";
 import type { Visitor, Node, NodePath } from "@babel/traverse";
 
 function unique(value: unknown, index: number, self: unknown[]) {
@@ -13,18 +14,18 @@ export default function babelPlugin(): { name: string; visitor: Visitor } {
     visitor: {
       Program: {
         enter(path) {
-          const events = getInteractions(path);
+          const interactions = getInteractions(path);
 
-          if (events.length === 0) {
+          if (interactions.length === 0) {
             path.node.body = [statement`export {};`()];
             return;
           }
 
-          const dependentCode = events
+          const dependentCode = interactions
             .flatMap(([, handler]) => getReferencedStatements(handler))
             .filter(unique)
             .map(p => p.node);
-          const addEventListeners = events.map(([event, handler], index) => {
+          const addEventListeners = interactions.map(([event, handler], index) => {
             const selector = `'[data-hid="${index}"]'`;
             return statement`document.querySelector(${selector}).addEventListener("${event}", ${handler.toString()});`();
           });
@@ -74,38 +75,4 @@ function getReferencedStatements(path: NodePath<Node>): NodePath<Statement>[] {
     }
     return a.node.start < b.node.start ? -1 : 1;
   });
-}
-
-function getInteractions(path: NodePath<Node>): [event: string, handler: NodePath<Expression>][] {
-  const events: [event: string, handler: NodePath<Expression>][] = [];
-
-  path.traverse({
-    JSXAttribute: path => {
-      const identifier = path.get("name").node.name;
-      const name = typeof identifier === "string" ? identifier : identifier.name;
-      const eventName = getEventName(name);
-
-      if (!eventName) return;
-
-      const value = path.get("value");
-
-      if (!value.isJSXExpressionContainer()) {
-        throw new Error("x");
-      }
-
-      const expression = value.get("expression");
-
-      if (expression.isExpression()) {
-        events.push([eventName, expression]);
-      }
-    },
-  });
-
-  return events;
-}
-
-function getEventName(attrName: string): string | null {
-  const match = attrName.match(/^on([A-Z].+)/);
-  if (match === null || !match[1]) return null;
-  return match[1].charAt(0).toLowerCase() + match[1].slice(1);
 }
