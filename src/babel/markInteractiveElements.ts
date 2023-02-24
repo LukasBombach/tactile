@@ -1,7 +1,7 @@
 import { getInteractions } from "./getInteractions";
+import { unique, nonNullable, isJSXOpeningElement } from "./util";
 
-import type { Statement } from "@babel/types";
-import type { Visitor, Node, NodePath } from "@babel/traverse";
+import type { Visitor } from "@babel/traverse";
 
 export default function babelPlugin(): { name: string; visitor: Visitor } {
   return {
@@ -11,7 +11,11 @@ export default function babelPlugin(): { name: string; visitor: Visitor } {
         enter(path) {
           const interactions = getInteractions(path);
 
-          const elements = interactions.forEach();
+          const elements = interactions
+            .map(([, handler]) => handler.findParent(p => isJSXOpeningElement(p)))
+            .filter(nonNullable)
+            .filter(isJSXOpeningElement)
+            .filter(unique);
         },
       },
     },

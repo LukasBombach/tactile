@@ -1,12 +1,9 @@
 import { statement } from "@babel/template";
 import { getInteractions } from "./getInteractions";
+import { unique } from "./util";
 
 import type { Statement } from "@babel/types";
 import type { Visitor, Node, NodePath } from "@babel/traverse";
-
-function unique(value: unknown, index: number, self: unknown[]) {
-  return self.indexOf(value) === index;
-}
 
 export default function babelPlugin(): { name: string; visitor: Visitor } {
   return {
@@ -25,6 +22,7 @@ export default function babelPlugin(): { name: string; visitor: Visitor } {
             .flatMap(([, handler]) => getReferencedStatements(handler))
             .filter(unique)
             .map(p => p.node);
+
           const addEventListeners = interactions.map(([event, handler], index) => {
             const selector = `'[data-hid="${index}"]'`;
             return statement`document.querySelector(${selector}).addEventListener("${event}", ${handler.toString()});`();
