@@ -1,8 +1,13 @@
-import type { Expression } from "@babel/types";
+import { isJSXOpeningElement } from "./util";
+
+import type { Expression, JSXOpeningElement } from "@babel/types";
 import type { Node, NodePath } from "@babel/traverse";
 
-export function getInteractions(path: NodePath<Node>): [event: string, handler: NodePath<Expression>][] {
-  const events: [event: string, handler: NodePath<Expression>][] = [];
+type Interactions = [event: string, handler: NodePath<Expression>][];
+type InteractionsByElement = [element: NodePath<JSXOpeningElement>, interactions: Interactions][];
+
+export function getInteractions(path: NodePath<Node>): InteractionsByElement {
+  const interactions: Interactions = [];
 
   path.traverse({
     JSXAttribute: path => {
@@ -21,12 +26,39 @@ export function getInteractions(path: NodePath<Node>): [event: string, handler: 
       const expression = value.get("expression");
 
       if (expression.isExpression()) {
-        events.push([eventName, expression]);
+        interactions.push([eventName, expression]);
       }
     },
   });
 
-  return events;
+  return groupByElement(interactions);
+}
+
+/**
+ * todo the nested arrays will be a pain to work with
+ * todo the code (specifically the naming) is terrible
+ */
+function groupByElement(interactions: Interactions): InteractionsByElement {
+  const elements: InteractionsByElement = [];
+
+  interactions.forEach(([event, handler]) => {
+    const openingEl = handler.findParent(p => isJSXOpeningElement(p));
+
+    if (!openingEl || !isJSXOpeningElement(openingEl)) {
+      throw new Error("not gonna happen");
+    }
+
+    const record = elements.find(([el]) => openingEl === el);
+
+    if (record) {
+      const [, recordInteractions] = record;
+      recordInteractions.push([event, handler]);
+    } else {
+      elements.push([openingEl, [[event, handler]]]);
+    }
+  });
+
+  return elements;
 }
 
 function getEventName(attrName: string): string | null {

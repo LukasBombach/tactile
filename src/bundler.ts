@@ -3,7 +3,8 @@ import resolve from "@rollup/plugin-node-resolve";
 import babel from "@rollup/plugin-babel";
 import outputManifest from "rollup-plugin-output-manifest";
 import deepmerge from "deepmerge";
-import clientJsPlugin from "./babel/extractClientJs";
+import extractClientJs from "./babel/extractClientJs";
+import markInteractiveElements from "./babel/markInteractiveElements";
 
 import type { RollupOptions, OutputOptions } from "rollup";
 import type { PluginItem } from "@babel/core";
@@ -15,14 +16,15 @@ export async function bundle(entryFile: string, outputDir: string): Promise<void
 export async function createServerBundle(entryFile: string, outputDir: string): Promise<void> {
   await createBundle(
     { input: entryFile, plugins: [outputManifest({ fileName: "manifest.server.json" })] },
-    { file: `${outputDir}/index_server.js`, format: "cjs" }
+    { file: `${outputDir}/index_server.js`, format: "cjs" },
+    [markInteractiveElements]
   );
 }
 export async function createClientBundle(entryFile: string, outputDir: string): Promise<void> {
   await createBundle(
     { input: entryFile, plugins: [outputManifest({ fileName: "manifest.client.json" })] },
     { file: `${outputDir}/index_client.js`, format: "es" },
-    [clientJsPlugin]
+    [extractClientJs]
   );
 }
 

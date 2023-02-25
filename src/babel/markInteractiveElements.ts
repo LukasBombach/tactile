@@ -1,5 +1,5 @@
+import * as t from "@babel/types";
 import { getInteractions } from "./getInteractions";
-import { unique, nonNullable, isJSXOpeningElement } from "./util";
 
 import type { Visitor } from "@babel/traverse";
 
@@ -9,13 +9,10 @@ export default function babelPlugin(): { name: string; visitor: Visitor } {
     visitor: {
       Program: {
         enter(path) {
-          const interactions = getInteractions(path);
-
-          const elements = interactions
-            .map(([, handler]) => handler.findParent(p => isJSXOpeningElement(p)))
-            .filter(nonNullable)
-            .filter(isJSXOpeningElement)
-            .filter(unique);
+          getInteractions(path).forEach(([el], index) => {
+            const dataTactileId = t.jsxAttribute(t.jsxIdentifier("data-tactile-id"), t.stringLiteral(String(index)));
+            el.pushContainer("attributes", dataTactileId);
+          });
         },
       },
     },

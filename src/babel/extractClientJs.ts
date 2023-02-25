@@ -19,13 +19,16 @@ export default function babelPlugin(): { name: string; visitor: Visitor } {
           }
 
           const dependentCode = interactions
+            .flatMap(([, interaction]) => interaction)
             .flatMap(([, handler]) => getReferencedStatements(handler))
             .filter(unique)
             .map(p => p.node);
 
-          const addEventListeners = interactions.map(([event, handler], index) => {
-            const selector = `'[data-hid="${index}"]'`;
-            return statement`document.querySelector(${selector}).addEventListener("${event}", ${handler.toString()});`();
+          const addEventListeners = interactions.flatMap(([, interactions], index) => {
+            return interactions.map(([event, handler]) => {
+              const selector = `'[data-hid="${index}"]'`;
+              return statement`document.querySelector(${selector}).addEventListener("${event}", ${handler.toString()});`();
+            });
           });
 
           path.node.body = [...dependentCode, ...addEventListeners];
