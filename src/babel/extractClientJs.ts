@@ -26,7 +26,7 @@ export default function babelPlugin(): { name: string; visitor: Visitor } {
 
           const addEventListeners = interactions.flatMap(([, interactions], index) => {
             return interactions.map(([event, handler]) => {
-              const selector = `'[data-hid="${index}"]'`;
+              const selector = `'[data-tactile-id="${index}"]'`;
               return statement`document.querySelector(${selector}).addEventListener("${event}", ${handler.toString()});`();
             });
           });
