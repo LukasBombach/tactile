@@ -5,6 +5,23 @@ import { unique } from "./util";
 import type { Statement } from "@babel/types";
 import type { Visitor, Node, NodePath } from "@babel/traverse";
 
+/**
+ *  ***** IDEA *****
+ *
+ * instead of data-tactile-id
+ * add this code before or after the element
+ * (better after so the dom element is there already)
+ *
+ *
+ * <script type="json/tactile-data" (just maybe data-tactile-id="0")>
+ * {
+ *   ...hydration data
+ *   getElement: () => [this node].previousElement()
+ * }
+ * </script>
+ *
+ * something like this
+ */
 export default function babelPlugin(): { name: string; visitor: Visitor } {
   return {
     name: "extract client js plugin",

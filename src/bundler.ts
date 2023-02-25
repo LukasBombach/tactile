@@ -14,16 +14,14 @@ export async function bundle(entryFile: string, outputDir: string): Promise<void
 }
 
 export async function createServerBundle(entryFile: string, outputDir: string): Promise<void> {
-  await createBundle(
-    { input: entryFile, plugins: [outputManifest({ fileName: "manifest.server.json" })] },
-    { file: `${outputDir}/index_server.js`, format: "cjs" },
-    [markInteractiveElements]
-  );
+  await createBundle({ input: entryFile, plugins: [] }, { file: `${outputDir}/index.js`, format: "cjs" }, [
+    markInteractiveElements,
+  ]);
 }
 export async function createClientBundle(entryFile: string, outputDir: string): Promise<void> {
   await createBundle(
-    { input: entryFile, plugins: [outputManifest({ fileName: "manifest.client.json" })] },
-    { file: `${outputDir}/index_client.js`, format: "es" },
+    { input: entryFile, plugins: [outputManifest({ fileName: "manifest.json" })] },
+    { file: `${outputDir}/public/index.js`, format: "es" },
     [extractClientJs]
   );
 }
