@@ -1,6 +1,9 @@
+import React, { useState } from "react";
 import { ClientJavaScript } from "../src/client";
 
 export default function Home() {
+  const [count, setCount] = useState(1);
+
   return (
     <html lang="en">
       <head>
@@ -12,7 +15,7 @@ export default function Home() {
         <main>
           <p>hello world</p>
           <p>
-            <button onClick={() => console.log("hello world")}>click me</button>
+            <button onClick={() => setCount(count + 1)}>click me {count}</button>
           </p>
         </main>
         <ClientJavaScript />

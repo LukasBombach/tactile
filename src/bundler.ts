@@ -1,7 +1,9 @@
 import { rollup } from "rollup";
 import resolve from "@rollup/plugin-node-resolve";
+import commonjs from "@rollup/plugin-commonjs";
 import babel from "@rollup/plugin-babel";
 import outputManifest from "rollup-plugin-output-manifest";
+
 import deepmerge from "deepmerge";
 import extractClientJs from "./babel/extractClientJs";
 import markInteractiveElements from "./babel/markInteractiveElements";
@@ -37,12 +39,14 @@ export async function createBundle(
         resolve({
           extensions: [".js", ".jsx", ".ts", ".tsx"],
         }),
+        commonjs(),
         babel({
           babelHelpers: "bundled",
           skipPreflightCheck: true,
           extensions: [".js", ".jsx", ".ts", ".tsx"],
           presets: ["@babel/env", "@babel/preset-typescript", ["@babel/preset-react", { runtime: "automatic" }]],
           plugins: babelPlugins,
+          exclude: "**/node_modules/**/*",
         }),
         {
           name: "remove empty",
@@ -55,7 +59,6 @@ export async function createBundle(
           },
         },
       ],
-      external: ["react", "react/jsx-runtime"],
     },
     inputOptions
   );

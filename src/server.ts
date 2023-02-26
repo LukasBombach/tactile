@@ -12,8 +12,13 @@ router.get("/", async ctx => {
   try {
     ctx.body = await ssr("dist/app/index.js");
   } catch (error) {
-    console.error(error);
+    console.error("\n", error);
+
     ctx.body = String(error);
+
+    if (error instanceof Error) {
+      ctx.body += `\n\n${error.stack}`;
+    }
   }
 });
 
