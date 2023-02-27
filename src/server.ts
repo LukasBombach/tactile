@@ -17,11 +17,11 @@ router.get("/", async ctx => {
   }
 });
 
-server.use(mount("/public", serve("dist/app/public")));
+server.use(mount("/", serve("dist/app/public")));
 
 server.use(router.routes());
 
-bundle("app/index.tsx", "dist/app").then(() => {
+bundle("app", "dist/app").then(() => {
   server.listen(3000);
   console.log("server started at http://localhost:3000", "\n");
 });

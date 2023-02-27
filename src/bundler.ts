@@ -2,6 +2,8 @@ import { rollup } from "rollup";
 import resolve from "@rollup/plugin-node-resolve";
 import babel from "@rollup/plugin-babel";
 import outputManifest from "rollup-plugin-output-manifest";
+import copy from "rollup-plugin-copy";
+import { rimraf } from "rimraf";
 import deepmerge from "deepmerge";
 import extractClientJs from "./babel/extractClientJs";
 import markInteractiveElements from "./babel/markInteractiveElements";
@@ -9,30 +11,42 @@ import markInteractiveElements from "./babel/markInteractiveElements";
 import type { RollupOptions, OutputOptions } from "rollup";
 import type { PluginItem } from "@babel/core";
 
-export async function bundle(entryFile: string, outputDir: string): Promise<void> {
-  await Promise.all([createServerBundle(entryFile, outputDir), createClientBundle(entryFile, outputDir)]);
+export async function bundle(appDir: string, outputDir: string): Promise<void> {
+  await Promise.all([createServerBundle(appDir, outputDir), createClientBundle(appDir, outputDir)]);
 }
 
-export async function createServerBundle(entryFile: string, outputDir: string): Promise<void> {
-  await createBundle({ input: entryFile, plugins: [] }, { file: `${outputDir}/index.js`, format: "cjs" }, [
+export async function createServerBundle(appDir: string, outputDir: string): Promise<void> {
+  await rimraf(`${outputDir}/index.js`);
+  await createBundle(appDir, { plugins: [] }, { file: `${outputDir}/index.js`, format: "cjs" }, [
     markInteractiveElements,
   ]);
 }
-export async function createClientBundle(entryFile: string, outputDir: string): Promise<void> {
+export async function createClientBundle(appDir: string, outputDir: string): Promise<void> {
+  await rimraf(`${outputDir}/public`);
   await createBundle(
-    { input: entryFile, plugins: [outputManifest({ fileName: "manifest.json" })] },
-    { file: `${outputDir}/public/index.js`, format: "es" },
+    appDir,
+    {
+      plugins: [
+        outputManifest({ fileName: "manifest.json" }),
+        copy({
+          targets: [{ src: `${appDir}/public/*`, dest: `${outputDir}/public` }],
+        }),
+      ],
+    },
+    { file: `${outputDir}/public/app/index.js`, format: "es" },
     [extractClientJs]
   );
 }
 
 export async function createBundle(
+  appDir: string,
   inputOptions: RollupOptions,
   outputOptions: OutputOptions,
   babelPlugins?: PluginItem[]
 ): Promise<void> {
   const input = deepmerge(
     {
+      input: `${appDir}/index.tsx`,
       plugins: [
         resolve({
           extensions: [".js", ".jsx", ".ts", ".tsx"],

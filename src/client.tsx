@@ -1,9 +1,9 @@
 import { readFileSync } from "node:fs";
 
 export const ClientJavaScript = () => {
-  const contents = readFileSync("dist/app/public/manifest.json", "utf-8");
+  const contents = readFileSync("dist/app/public/app/manifest.json", "utf-8");
   const data = JSON.parse(contents);
-  const srcs = Object.values(data).map(file => `/public/${file}`);
+  const srcs = Object.values(data).map(file => `/app/${file}`);
   return (
     <>
       {srcs.map(src => (
