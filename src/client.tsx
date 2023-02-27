@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import React from "react";
 
 export const ClientJavaScript = () => {
   const contents = readFileSync("dist/app/public/app/manifest.json", "utf-8");
