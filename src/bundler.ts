@@ -9,7 +9,7 @@ import deepmerge from "deepmerge";
 import extractClientJs from "./babel/extractClientJs";
 import markInteractiveElements from "./babel/markInteractiveElements";
 
-import type { RollupOptions, OutputOptions } from "rollup";
+import type { RollupOptions, OutputOptions, OutputBundle, OutputAsset, OutputChunk } from "rollup";
 import type { PluginItem } from "@babel/core";
 
 export async function bundle(appDir: string, outputDir: string): Promise<void> {
@@ -64,11 +64,9 @@ export async function createBundle(
         {
           name: "remove empty",
           generateBundle: (_options, bundle) => {
-            Object.keys(bundle).forEach(key => {
-              if (Object.hasOwn(bundle, key) && bundle[key]?.code?.trim().length === 0) {
-                delete bundle[key];
-              }
-            });
+            Object.entries(bundle)
+              .filter(([, value]) => isOutputChunk(value) && codeIsEmpty(value))
+              .forEach(([key]) => delete bundle[key]);
           },
         },
       ],
@@ -82,4 +80,12 @@ export async function createBundle(
   const bundle = await rollup(input);
   await bundle.write(output);
   await bundle.close();
+}
+
+function isOutputChunk(output: OutputAsset | OutputChunk | undefined): output is OutputChunk {
+  return !!output && "code" in output;
+}
+
+function codeIsEmpty(output: OutputChunk): boolean {
+  return output.code.trim().length === 0;
 }
