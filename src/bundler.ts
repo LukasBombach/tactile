@@ -17,13 +17,13 @@ export async function bundle(appDir: string, outputDir: string): Promise<void> {
 }
 
 export async function createServerBundle(appDir: string, outputDir: string): Promise<void> {
-  await rimraf(`${outputDir}/index.js`);
+  // await rimraf(`${outputDir}/index.js`);
   await createBundle(appDir, { plugins: [] }, { file: `${outputDir}/index.js`, format: "cjs" }, [
     markInteractiveElements,
   ]);
 }
 export async function createClientBundle(appDir: string, outputDir: string): Promise<void> {
-  await rimraf(`${outputDir}/public`);
+  // await rimraf(`${outputDir}/public`);
   await createBundle(
     appDir,
     {
@@ -45,7 +45,7 @@ export async function createBundle(
   outputOptions: OutputOptions,
   babelPlugins?: PluginItem[]
 ): Promise<void> {
-  const input = deepmerge(
+  const input = deepmerge<RollupOptions>(
     {
       input: `${appDir}/index.tsx`,
       plugins: [
@@ -72,6 +72,7 @@ export async function createBundle(
           },
         },
       ],
+      external: ["react"],
     },
     inputOptions
   );
