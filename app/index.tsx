@@ -1,5 +1,5 @@
-import React from "react";
-import { ClientJavaScript } from "../src/client";
+import React, { useState } from "react";
+import { hydrateRoot } from "react-dom/client";
 
 export default function Home() {
   return (
@@ -10,15 +10,26 @@ export default function Home() {
         <link rel="icon" href="/favicon.png" />
         <title>Hello App</title>
       </head>
-      <body>
-        <main>
-          <p>hello world</p>
-          <p>
-            <button onClick={() => console.log("client side code")}>click me</button>
-          </p>
-        </main>
-        <ClientJavaScript />
-      </body>
+      <Body />
     </html>
   );
+}
+
+const Body = () => {
+  const [count, setCount] = useState(1);
+  return (
+    <body>
+      <main>
+        <p>hello world</p>
+        <p>
+          <button onClick={() => setCount(count + 1)}>Count {count}</button>
+        </p>
+      </main>
+    </body>
+  );
+};
+
+if (typeof window !== "undefined") {
+  const root = hydrateRoot(document.body, <Body />);
+  console.log(root);
 }

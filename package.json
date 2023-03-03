@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node src/dev.ts",
-    "build": "ts-node src/build.ts"
+    "build": "ts-node src/build.ts",
+    "build-watch": "onchange -i 'app/**/*' 'src/**/*' -- ts-node src/build.ts"
   },
   "keywords": [],
   "author": "",
@@ -25,6 +26,7 @@
     "@swc/helpers": "0.4.14",
     "@tsconfig/node-lts-strictest": "18.12.1",
     "@tsconfig/node-lts-strictest-esm": "18.12.1",
+    "@tsconfig/recommended": "1.0.2",
     "@types/babel__core": "7.20.0",
     "@types/babel__template": "7.4.1",
     "@types/babel__traverse": "7.18.3",
@@ -35,11 +37,13 @@
     "@types/node": "18.14.0",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
+    "chalk": "^4",
     "deepmerge": "4.3.0",
     "koa": "2.14.1",
     "koa-mount": "4.0.0",
     "koa-router": "12.0.0",
     "koa-static": "5.0.0",
+    "onchange": "7.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "regenerator-runtime": "0.13.11",
