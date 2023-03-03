@@ -1,4 +1,5 @@
 import * as t from "@babel/types";
+import { MARK_FOR_EXTRACTION } from "./mark";
 
 import type { Node, NodePath } from "@babel/traverse";
 
@@ -6,7 +7,10 @@ export function getWindowCode(path: NodePath<Node>): NodePath<t.IfStatement>[] {
   const ifStatements: NodePath<t.IfStatement>[] = [];
   path.traverse({
     IfStatement: path => {
-      if (checksIfWindowExists(path.get("test"))) ifStatements.push(path);
+      if (checksIfWindowExists(path.get("test"))) {
+        MARK_FOR_EXTRACTION(path, true);
+        ifStatements.push(path);
+      }
     },
   });
   return ifStatements;

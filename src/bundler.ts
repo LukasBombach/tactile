@@ -68,7 +68,7 @@ export async function createBundle(
         }),
         removeEmptyOutputs(),
       ],
-      external: ["react"],
+      external: ["react", "react-dom"],
     },
     inputOptions
   );

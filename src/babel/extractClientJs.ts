@@ -1,6 +1,10 @@
+import chalk from "chalk";
 import { statement } from "@babel/template";
 import { getInteractions } from "./getInteractions";
 import { getWindowCode } from "./getWindowCode";
+import { markDependedOnCode } from "./markDependedOnCode";
+import { shouldExtract } from "./mark";
+import { logOutput } from "./debug";
 import { unique } from "./util";
 
 import type { Statement } from "@babel/types";
@@ -12,28 +16,49 @@ export default function babelPlugin(): { name: string; visitor: Visitor } {
     visitor: {
       Program: {
         enter(path) {
-          getWindowCode(path);
-          const interactions = getInteractions(path);
+          console.log();
 
-          if (interactions.length === 0) {
-            path.node.body = [statement`export {};`()];
-            return;
-          }
+          const ifStatements = getWindowCode(path);
 
-          const dependentCode = interactions
-            .flatMap(([, interaction]) => interaction)
-            .flatMap(([, handler]) => getReferencedStatements(handler))
-            .filter(unique)
-            .map(p => p.node);
+          // console.log(ifStatements.map(String));
 
-          const addEventListeners = interactions.flatMap(([, interactions], index) => {
-            return interactions.map(([event, handler]) => {
-              const selector = `'[data-tactile-id="${index}"]'`;
-              return statement`document.querySelector(${selector}).addEventListener("${event}", ${handler.toString()});`();
-            });
+          ifStatements.forEach(path => markDependedOnCode(path));
+
+          path.traverse({
+            Standardized: path => {
+              if (shouldExtract(path)) {
+                logOutput(path, true);
+                path.skip();
+              }
+              if (!shouldExtract(path)) {
+                logOutput(path, false);
+                path.skip();
+                path.remove();
+              }
+            },
           });
 
-          path.node.body = [...dependentCode, ...addEventListeners];
+          // const interactions = getInteractions(path);
+
+          // if (interactions.length === 0) {
+          //   path.node.body = [statement`export {};`()];
+          //   return;
+          // }
+
+          // const dependentCode = interactions
+          //   .flatMap(([, interaction]) => interaction)
+          //   .flatMap(([, handler]) => getReferencedStatements(handler))
+          //   .filter(unique)
+          //   .map(p => p.node);
+
+          // const addEventListeners = interactions.flatMap(([, interactions], index) => {
+          //   return interactions.map(([event, handler]) => {
+          //     const selector = `'[data-tactile-id="${index}"]'`;
+          //     return statement`document.querySelector(${selector}).addEventListener("${event}", ${handler.toString()});`();
+          //   });
+          // });
+
+          // path.node.body = [...dependentCode, ...addEventListeners];
         },
       },
     },
