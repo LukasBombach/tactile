@@ -1,5 +1,6 @@
 import { statement } from "@babel/template";
 import { getInteractions } from "./getInteractions";
+import { getWindowCode } from "./getWindowCode";
 import { unique } from "./util";
 
 import type { Statement } from "@babel/types";
@@ -11,6 +12,7 @@ export default function babelPlugin(): { name: string; visitor: Visitor } {
     visitor: {
       Program: {
         enter(path) {
+          getWindowCode(path);
           const interactions = getInteractions(path);
 
           if (interactions.length === 0) {
