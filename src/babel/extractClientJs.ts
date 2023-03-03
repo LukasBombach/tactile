@@ -16,7 +16,6 @@ export default function babelPlugin(): { name: string; visitor: Visitor } {
     visitor: {
       Program: {
         enter(path) {
-          console.log();
           markEventHandlers(path);
 
           const ifStatements = getWindowCode(path);
@@ -27,11 +26,11 @@ export default function babelPlugin(): { name: string; visitor: Visitor } {
           path.traverse({
             Standardized: path => {
               if (shouldExtract(path)) {
-                logOutput(path, true);
+                logOutput(path, "green");
                 path.skip();
               }
               if (!shouldExtract(path)) {
-                logOutput(path, false);
+                logOutput(path, "red");
                 path.skip();
                 path.remove();
               }
@@ -80,7 +79,6 @@ function markEventHandlers(path: NodePath<Node>) {
       }
 
       const expression = value.get("expression");
-      console.log("expression", String(expression));
 
       if (expression.isExpression()) {
         MARK_FOR_EXTRACTION(expression);

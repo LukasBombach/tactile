@@ -2,15 +2,11 @@ import chalk from "chalk";
 
 import type { Node, NodePath } from "@babel/traverse";
 
-export function logOutput(path: NodePath<Node>, keep: boolean) {
+export function logOutput(path: NodePath<Node>, color: "green" | "red" | "blue") {
   const start = path.node.loc?.start.line;
   const code = preprendLineNumbers(String(path), start);
 
-  if (keep) {
-    console.log(chalk.green(code));
-  } else {
-    console.log(chalk.red(code));
-  }
+  console.log(chalk[color](code));
 }
 
 function preprendLineNumbers(code: string, start: number | undefined) {

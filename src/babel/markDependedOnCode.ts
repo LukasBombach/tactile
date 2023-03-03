@@ -16,8 +16,6 @@ export function markDependedOnCode(path: NodePath<Node>) {
           markJsx(argument.get("openingElement").get("name"));
         } else if (argument.isIdentifier()) {
           markIdentifier(argument);
-        } else {
-          console.log("---", String(argument));
         }
       });
     },
