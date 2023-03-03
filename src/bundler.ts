@@ -13,7 +13,7 @@ import type { Plugin, RollupOptions, OutputOptions, OutputAsset, OutputChunk } f
 import type { PluginItem } from "@babel/core";
 
 export async function bundle(appDir: string, outputDir: string): Promise<void> {
-  await Promise.all([createServerBundle(appDir, outputDir), createClientBundle(appDir, outputDir)]);
+  await Promise.all([/* createServerBundle(appDir, outputDir),  */ createClientBundle(appDir, outputDir)]);
 }
 
 export async function createServerBundle(appDir: string, outputDir: string): Promise<void> {
@@ -61,14 +61,14 @@ export async function createBundle(
               },
             ],
             "@babel/preset-typescript",
-            ["@babel/preset-react", { runtime: "automatic" }],
+            ["@babel/preset-react" /* , { runtime: "automatic" } */, { pure: false }],
           ],
           plugins: babelPlugins,
           exclude: "**/node_modules/**/*",
         }),
         removeEmptyOutputs(),
       ],
-      external: ["react", "react-dom"],
+      external: ["react", "react-dom", "react-dom/client"],
     },
     inputOptions
   );

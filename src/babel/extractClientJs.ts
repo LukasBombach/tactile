@@ -3,7 +3,7 @@ import { statement } from "@babel/template";
 import { getInteractions } from "./getInteractions";
 import { getWindowCode } from "./getWindowCode";
 import { markDependedOnCode } from "./markDependedOnCode";
-import { shouldExtract } from "./mark";
+import { MARK_FOR_EXTRACTION, shouldExtract } from "./mark";
 import { logOutput } from "./debug";
 import { unique } from "./util";
 
@@ -17,11 +17,11 @@ export default function babelPlugin(): { name: string; visitor: Visitor } {
       Program: {
         enter(path) {
           console.log();
+          markEventHandlers(path);
 
           const ifStatements = getWindowCode(path);
 
           // console.log(ifStatements.map(String));
-
           ifStatements.forEach(path => markDependedOnCode(path));
 
           path.traverse({
@@ -63,6 +63,31 @@ export default function babelPlugin(): { name: string; visitor: Visitor } {
       },
     },
   };
+}
+
+function markEventHandlers(path: NodePath<Node>) {
+  path.traverse({
+    JSXAttribute: path => {
+      const identifier = path.get("name").node.name;
+      const name = typeof identifier === "string" ? identifier : identifier.name;
+
+      if (!name.match(/^on([A-Z].+)/)) return;
+
+      const value = path.get("value");
+
+      if (!value.isJSXExpressionContainer()) {
+        throw new Error("x");
+      }
+
+      const expression = value.get("expression");
+      console.log("expression", String(expression));
+
+      if (expression.isExpression()) {
+        MARK_FOR_EXTRACTION(expression);
+        markDependedOnCode(expression);
+      }
+    },
+  });
 }
 
 function getReferencedStatements(path: NodePath<Node>): NodePath<Statement>[] {

@@ -5,12 +5,19 @@ import type { Node, NodePath } from "@babel/traverse";
 
 export function markDependedOnCode(path: NodePath<Node>) {
   path.traverse({
+    Identifier: identifier => {
+      markIdentifier(identifier);
+    },
     CallExpression: call => {
       MARK_FOR_EXTRACTION(call, true);
 
       call.get("arguments").forEach(argument => {
         if (argument.isJSXElement()) {
           markJsx(argument.get("openingElement").get("name"));
+        } else if (argument.isIdentifier()) {
+          markIdentifier(argument);
+        } else {
+          console.log("---", String(argument));
         }
       });
     },
@@ -23,6 +30,7 @@ function markJsx(path: NodePath<t.JSXIdentifier | t.JSXMemberExpression | t.JSXN
     const statement = binding?.path.getStatementParent();
     if (!statement) return;
     MARK_FOR_EXTRACTION(statement, true);
+    markDependedOnCode(statement);
   }
 
   if (path.isJSXMemberExpression()) {
@@ -36,6 +44,7 @@ function markJsx(path: NodePath<t.JSXIdentifier | t.JSXMemberExpression | t.JSXN
 
 function markIdentifier(path: NodePath<t.Identifier>) {
   const binding = path.scope.getBinding(path.node.name);
-  if (!binding) return;
-  console.log(String(binding.path));
+  const statement = binding?.path.getStatementParent();
+  if (!statement) return;
+  MARK_FOR_EXTRACTION(statement, true);
 }
