@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { renderToString } from "react-dom/server";
 import { hydrateRoot } from "react-dom/client";
 
 export default function Home() {
@@ -32,4 +33,8 @@ const Body = () => {
 if (typeof window !== "undefined") {
   const root = hydrateRoot(document.body, <Body />);
   console.log(root);
+}
+
+export function ssr() {
+  return "<!DOCTYPE html>" + renderToString(<Home />);
 }
