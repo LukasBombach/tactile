@@ -11,36 +11,22 @@ export default function babelPlugin(): { name: string; visitor: Visitor } {
     visitor: {
       Program: {
         enter(path) {
-          markEventHandlers(path);
+          // markEventHandlers(path);
           markEscapeHatches(path);
 
           path.traverse({
             Standardized: path => {
-              if (shouldExtract(path)) {
-                logOutput(path, "green");
-                path.skip();
-              }
-              if (!shouldExtract(path)) {
-                logOutput(path, "red");
-                path.skip();
-                path.remove();
-              }
+              const extract = isMarkedForExtraction(path);
+              const color = extract ? "green" : "red";
+              logOutput(path, color);
+              path.skip();
+              if (!extract) path.remove();
             },
           });
         },
       },
     },
   };
-}
-
-function markEscapeHatches(path: NodePath<Node>) {
-  path.traverse({
-    IfStatement: path => {
-      if (checksIfCodeIsExecutedInABrowser(path)) {
-        markAndFollowDependedOnCode(path);
-      }
-    },
-  });
 }
 
 /**
@@ -69,6 +55,22 @@ function markEventHandlers(path: NodePath<Node>) {
 }
 
 /**
+ * Marks code that explicitly signals that it should
+ * run on the client
+ *
+ * fi. `if (typeof window !== "undefined") {}`
+ */
+function markEscapeHatches(path: NodePath<Node>) {
+  path.traverse({
+    IfStatement: path => {
+      if (checksIfCodeIsExecutedInABrowser(path)) {
+        markAndFollowDependedOnCode(path);
+      }
+    },
+  });
+}
+
+/**
  * Matches if-statements testing for a browser environment
  *
  * eg. `if (typeof window !== "undefined") {}`
@@ -90,32 +92,6 @@ function markAndFollowDependedOnCode(path: NodePath<Node>) {
   markForExtraction(path);
   markDependedOnCode(path);
 }
-
-function markForExtraction(path: NodePath<Node>) {
-  path.setData(EXTRACT_CLIENT_JS, true);
-}
-
-function shouldExtract(path: NodePath<Node>): boolean {
-  return path.getData(EXTRACT_CLIENT_JS);
-}
-
-/**
- * Cheks if a comparion uses one of the operators `!=` or `!==`
- */
-const comparesUnequality = (path: NodePath<t.BinaryExpression>) => ["!=", "!=="].includes(path.node.operator);
-
-/**
- * Checks if code matches `typeof window`
- * todo check for possible reassignments of the window object
- */
-const isTypeofWindow = (path: NodePath<Node>): boolean =>
-  path.isUnaryExpression({ operator: "typeof" }) && path.get("argument").isIdentifier({ name: "window" });
-
-/**
- * Check is code matches the string `"undefined"`
- * todo resolve identifiers
- */
-const isStrUndefined = (path: NodePath<Node>): boolean => path.isStringLiteral({ value: "undefined" });
 
 export function markDependedOnCode(path: NodePath<Node>) {
   path.traverse({
@@ -160,6 +136,32 @@ function markIdentifier(path: NodePath<t.Identifier>) {
   if (!statement) return;
   markForExtraction(statement);
 }
+
+function markForExtraction(path: NodePath<Node>) {
+  path.setData(EXTRACT_CLIENT_JS, true);
+}
+
+function isMarkedForExtraction(path: NodePath<Node>): boolean {
+  return path.getData(EXTRACT_CLIENT_JS);
+}
+
+/**
+ * Cheks if a comparion uses one of the operators `!=` or `!==`
+ */
+const comparesUnequality = (path: NodePath<t.BinaryExpression>) => ["!=", "!=="].includes(path.node.operator);
+
+/**
+ * Checks if code matches `typeof window`
+ * todo check for possible reassignments of the window object
+ */
+const isTypeofWindow = (path: NodePath<Node>): boolean =>
+  path.isUnaryExpression({ operator: "typeof" }) && path.get("argument").isIdentifier({ name: "window" });
+
+/**
+ * Check is code matches the string `"undefined"`
+ * todo resolve identifiers
+ */
+const isStrUndefined = (path: NodePath<Node>): boolean => path.isStringLiteral({ value: "undefined" });
 
 // function getReferencedStatements(path: NodePath<Node>): NodePath<Statement>[] {
 //   const statements: NodePath<Statement>[] = [];

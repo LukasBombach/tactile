@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { renderToString } from "react-dom/server";
 import { hydrateRoot } from "react-dom/client";
 
-export default function Home() {
+function Home() {
   return (
     <html lang="en">
       <head>
@@ -16,6 +16,10 @@ export default function Home() {
   );
 }
 
+function square(n: number): number {
+  return n * n;
+}
+
 const Body = () => {
   const [count, setCount] = useState(1);
   return (
@@ -23,7 +27,7 @@ const Body = () => {
       <main>
         <p>hello world</p>
         <p>
-          <button onClick={() => setCount(count + 1)}>Count {count}</button>
+          <button onClick={() => setCount(square(count))}>Count {count}</button>
         </p>
       </main>
     </body>
