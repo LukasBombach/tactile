@@ -1,8 +1,12 @@
 import React, { useState } from "react";
-import { renderToString } from "react-dom/server";
-import { hydrateRoot } from "react-dom/client";
+
+function square(n: number): number {
+  return n * n;
+}
 
 function Home() {
+  const [count, setCount] = useState(1);
+
   return (
     <html lang="en">
       <head>
@@ -11,34 +15,16 @@ function Home() {
         <link rel="icon" href="/favicon.png" />
         <title>Hello App</title>
       </head>
-      <Body />
+      <body>
+        <main>
+          <h1>hello world</h1>
+          <p>
+            <button onClick={() => setCount(square(count))}>Count {count}</button>
+          </p>
+        </main>
+      </body>
     </html>
   );
 }
 
-function square(n: number): number {
-  return n * n;
-}
-
-const Body = () => {
-  const [count, setCount] = useState(1);
-  return (
-    <body>
-      <main>
-        <p>hello world</p>
-        <p>
-          <button onClick={() => setCount(square(count))}>Count {count}</button>
-        </p>
-      </main>
-    </body>
-  );
-};
-
-if (typeof window !== "undefined") {
-  const root = hydrateRoot(document.body, <Body />);
-  console.log(root);
-}
-
-export function ssr() {
-  return "<!DOCTYPE html>" + renderToString(<Home />);
-}
+export default Home;

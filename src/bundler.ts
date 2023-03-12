@@ -7,20 +7,14 @@ import copy from "rollup-plugin-copy";
 
 import deepmerge from "deepmerge";
 import extractClientJs from "./babel/extractClientJs";
-import markInteractiveElements from "./babel/markInteractiveElements";
 
 import type { Plugin, RollupOptions, OutputOptions, OutputAsset, OutputChunk } from "rollup";
 import type { PluginItem } from "@babel/core";
 
 export async function bundle(appDir: string, outputDir: string): Promise<void> {
-  await Promise.all([/* createServerBundle(appDir, outputDir),  */ createClientBundle(appDir, outputDir)]);
+  await Promise.all([createClientBundle(appDir, outputDir)]);
 }
 
-export async function createServerBundle(appDir: string, outputDir: string): Promise<void> {
-  await createBundle(appDir, { plugins: [] }, { file: `${outputDir}/index.js`, format: "cjs" }, [
-    markInteractiveElements,
-  ]);
-}
 export async function createClientBundle(appDir: string, outputDir: string): Promise<void> {
   await createBundle(
     appDir,

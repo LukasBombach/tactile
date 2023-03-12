@@ -11,7 +11,7 @@ export default function babelPlugin(): { name: string; visitor: Visitor } {
     visitor: {
       Program: {
         enter(path) {
-          // markEventHandlers(path);
+          markEventHandlers(path);
           markEscapeHatches(path);
 
           path.traverse({
@@ -19,8 +19,8 @@ export default function babelPlugin(): { name: string; visitor: Visitor } {
               const extract = isMarkedForExtraction(path);
               const color = extract ? "green" : "red";
               logOutput(path, color);
-              path.skip();
-              if (!extract) path.remove();
+              //path.skip();
+              //if (!extract) path.remove();
             },
           });
         },
@@ -162,43 +162,3 @@ const isTypeofWindow = (path: NodePath<Node>): boolean =>
  * todo resolve identifiers
  */
 const isStrUndefined = (path: NodePath<Node>): boolean => path.isStringLiteral({ value: "undefined" });
-
-// function getReferencedStatements(path: NodePath<Node>): NodePath<Statement>[] {
-//   const statements: NodePath<Statement>[] = [];
-//
-//   if (path.isIdentifier()) {
-//     (() => {
-//       const name = path.node.name;
-//       const binding = path.scope.getBinding(name);
-//       if (!binding) return;
-//       const statement = binding.path.getStatementParent();
-//       if (statement === null) return;
-//       if (statements.includes(statement)) return;
-//       statements.push(statement);
-//     })();
-//   }
-//
-//   path.traverse({
-//     Identifier: identifier => {
-//       const name = identifier.node.name;
-//       const binding = path.scope.getBinding(name);
-//       if (!binding) return;
-//       const statement = binding.path.getStatementParent();
-//       if (statement === null) return;
-//       if (statement === path) return;
-//       if (statements.includes(statement)) return;
-//       statements.push(statement);
-//     },
-//   });
-//
-//   const recursivelyFoundStatements = statements
-//     .flatMap(statement => getReferencedStatements(statement))
-//     .filter(s => s !== path && !statements.includes(s));
-//
-//   return [...statements, ...recursivelyFoundStatements].sort((a, b) => {
-//     if (typeof a.node.start !== "number" || typeof b.node.start !== "number") {
-//       throw new Error("missing start in statement");
-//     }
-//     return a.node.start < b.node.start ? -1 : 1;
-//   });
-// }
