@@ -15,7 +15,7 @@ test("values: using getters in setters", () => {
   expect(getVal()).toBe(2);
 });
 
-test("reactions: reacting to one value", () => {
+test("reactions: reacting one value", () => {
   const [getVal, setVal] = value("a");
   const reaction = jest.fn().mockImplementation(() => getVal());
 
