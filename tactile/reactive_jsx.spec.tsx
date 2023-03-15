@@ -1,4 +1,4 @@
-import { render } from "./jsx";
+import { render, screen } from "./testing-library";
 import { value } from "./reactive";
 
 test("reactive jsx", () => {
@@ -12,6 +12,6 @@ test("reactive jsx", () => {
     );
   };
 
-  const { container } = render(<Component />);
-  expect(container.innerHTML).toBe(`<p><button>Count 1</button></p>`);
+  render(<Component />);
+  expect(screen.innerHTML).toBe(`<p><button>Count 1</button></p>`);
 });
