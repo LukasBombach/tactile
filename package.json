@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "files": [
+    "reactive.js",
+    "reactive.d.ts"
+  ],
   "scripts": {
     "dev": "ts-node src/dev.ts",
     "build": "ts-node src/build.ts",
