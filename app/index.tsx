@@ -19,7 +19,7 @@ function Home() {
         <main>
           <h1>hello world</h1>
           <p>
-            <button onClick={() => setCount(square(count))}>Count {count}</button>
+            <button onClick={() => setCount(square(count()))}>Count {count}</button>
           </p>
         </main>
       </body>
