@@ -2,11 +2,11 @@
   "name": "tactile",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "private": true,
   "scripts": {
-    "dev": "ts-node src/dev.ts",
-    "build": "ts-node src/build.ts",
-    "build-watch": "onchange -i 'app/**/*' 'src/**/*' -- ts-node src/build.ts"
+    "dev": "ts-node tactile/dev.ts",
+    "build": "ts-node tactile/build.ts",
+    "build-watch": "onchange -i 'app/**/*' 'tactile/**/*' -- ts-node tactile/build.ts"
   },
   "keywords": [],
   "author": "",

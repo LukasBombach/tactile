@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import { value } from "tactile/reactive";
 
 function square(n: number): number {
   return n * n;
 }
 
 function Home() {
-  const [count, setCount] = useState(1);
+  const [count, setCount] = value(1);
 
   return (
     <html lang="en">

@@ -1,11 +1,14 @@
 {
   "extends": "@tsconfig/recommended",
   "compilerOptions": {
-    "jsx": "react"
+    "jsx": "preserve",
+    "paths": {
+      "tactile/*": ["./tactile/*"]
+    }
   },
   "ts-node": {
     "swc": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "dist"]
 }
