@@ -26,3 +26,5 @@ function isJSXElementConstructor(
 ): element is ReactElement<any, (props: any) => ReactElement<any, any> | null> {
   return typeof element.type === "function";
 }
+
+export async function getClientJs(source: string): Promise<string> {}

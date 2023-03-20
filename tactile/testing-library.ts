@@ -1,4 +1,4 @@
-import { renderServerHtml } from "./reactive_jsx";
+import { renderServerHtml, getClientJs } from "./reactive_jsx";
 
 import type { ReactElement } from "react";
 
